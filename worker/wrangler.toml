@@ -1,0 +1,7 @@
+name = "senka-api"
+main = "src/index.js"
+compatibility_date = "2024-09-01"
+
+# 本番でCORSをPagesドメインに限定する場合は、下記をSecretまたはvarで設定する
+# [vars]
+# ALLOWED_ORIGIN = "https://<your-project>.pages.dev"

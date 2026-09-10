@@ -1,12 +1,103 @@
 <!doctype html>
 <html lang="ja">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>フロントエンド</title>
-    </head>
-    <body>
-        <h1>フロントエンド</h1>
-        <p>pages</p>
-    </body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>学科紹介API デモ</title>
+    <style>
+      body {
+        font-family: system-ui, -apple-system, "Segoe UI", "Hiragino Sans", Meiryo, sans-serif;
+        margin: 0;
+        padding: 1.5rem;
+        max-width: 720px;
+        margin-inline: auto;
+        line-height: 1.6;
+        color: #1a1a1a;
+        background: #fafafa;
+      }
+      h1 { font-size: 1.4rem; }
+      fieldset { border: 1px solid #ccc; border-radius: 8px; margin-bottom: 1rem; }
+      legend { padding: 0 .4rem; font-weight: bold; }
+      label { display: block; font-size: .85rem; margin-bottom: .2rem; }
+      input {
+        width: 100%; padding: .5rem; box-sizing: border-box;
+        border: 1px solid #bbb; border-radius: 6px; font-size: 1rem;
+      }
+      .row { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .6rem; }
+      button {
+        padding: .5rem .9rem; border: 0; border-radius: 6px;
+        background: #f6821f; color: #fff; font-size: .95rem; cursor: pointer;
+      }
+      button:hover { background: #d96f13; }
+      pre {
+        background: #1e1e1e; color: #e6e6e6; padding: 1rem;
+        border-radius: 8px; overflow-x: auto; font-size: .85rem;
+        white-space: pre-wrap; word-break: break-word;
+      }
+      .status { font-size: .85rem; color: #555; }
+    </style>
+  </head>
+  <body>
+    <h1>学科紹介API デモ</h1>
+    <p class="status">Cloudflare Pages（画面）から Cloudflare Workers（API）を呼び出します。</p>
+
+    <fieldset>
+      <legend>接続先</legend>
+      <label for="base">Worker ベースURL</label>
+      <input id="base" value="http://127.0.0.1:8787" />
+      <p class="status">
+        本番では <code>https://&lt;worker-name&gt;.&lt;subdomain&gt;.workers.dev</code> に変更してください。
+      </p>
+    </fieldset>
+
+    <fieldset>
+      <legend>名前付き挨拶</legend>
+      <label for="name">name</label>
+      <input id="name" placeholder="山田" />
+    </fieldset>
+
+    <div class="row">
+      <button data-path="/api/course">course</button>
+      <button data-path="/api/hello" data-name="true">hello</button>
+      <button data-path="/api/fortune">fortune</button>
+      <button data-path="/api/events">events</button>
+      <button data-path="/api/nothing">未定義パス（404確認）</button>
+    </div>
+
+    <h2 style="font-size:1rem;">結果</h2>
+    <p class="status" id="meta">まだ呼び出していません。</p>
+    <pre id="result">—</pre>
+
+    <script>
+      const $ = (id) => document.getElementById(id);
+
+      async function call(path, useName) {
+        const base = $("base").value.replace(/\/+$/, "");
+        let target = base + path;
+        if (useName) {
+          const name = $("name").value.trim();
+          target += "?name=" + encodeURIComponent(name);
+        }
+        $("meta").textContent = "GET " + target;
+        try {
+          const res = await fetch(target);
+          const text = await res.text();
+          let body;
+          try { body = JSON.stringify(JSON.parse(text), null, 2); }
+          catch { body = text; }
+          $("meta").textContent = "GET " + target + "  →  " + res.status + " " + res.statusText;
+          $("result").textContent = body;
+        } catch (err) {
+          $("meta").textContent = "GET " + target + "  →  通信エラー";
+          $("result").textContent = String(err);
+        }
+      }
+
+      document.querySelectorAll("button[data-path]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          call(btn.dataset.path, btn.dataset.name === "true");
+        });
+      });
+    </script>
+  </body>
 </html>
