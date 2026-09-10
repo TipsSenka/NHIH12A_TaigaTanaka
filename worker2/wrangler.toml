@@ -1,0 +1,6 @@
+name = "senka-api"
+main = "src/index.js"
+compatibility_date = "2024-01-01"
+
+# 本番PagesのURLが決まったら、Cloudflare側でALLOWED_ORIGINを設定してください。
+# wrangler secret put ALLOWED_ORIGIN
