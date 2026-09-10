@@ -50,7 +50,7 @@ export default {
     }
 
     if (pathname === "/" || pathname === "/api") {
-      return json({ status: "running", message: "senka-api" }, 200, env);
+      return json({ status: "running", message: "workers-backend" }, 200, env);
     }
 
     if (pathname === "/api/course") {

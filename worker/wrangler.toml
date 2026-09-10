@@ -1,4 +1,4 @@
-name = "senka-api"
+name = "workers-backend"
 main = "src/index.js"
 compatibility_date = "2024-09-01"
 
